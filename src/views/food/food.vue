@@ -18,7 +18,7 @@
           <div class="cartcontrol-wrapper" v-show="food.count > 0">
             <buy-ball :food="food">购物小球</buy-ball>
           </div>
-          <div class="buy" v-show="!food.count || fooc.count === 0">
+          <div class="buy" v-show="!food.count || food.count === 0">
             加入购物车
           </div>
         </div>
