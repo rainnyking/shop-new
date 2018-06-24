@@ -2,12 +2,12 @@
   <div>
     <div class="cartcontrol">
       <transition name="move">
-        <div class="cart-decrease" v-show="food.count > 0" @click="reduce()">
+        <div class="cart-decrease" v-show="food.count > 0" @click.stop.prevent="reduce()">
           <span class="inner icon-remove_circle_outline iconfont icon-jian"></span>
         </div>
       </transition>
       <div class="cart-count" v-show="food.count > 0">{{food.count}}</div>
-      <div class="cart-add icon-add_circle iconfont icon-jia" @click="addCart()"></div>
+      <div class="cart-add icon-add_circle iconfont icon-jia" @click.stop.prevent="addCart(food, $event)"></div>
     </div>
   </div>
 </template>
@@ -21,19 +21,18 @@ export default {
     }
   },
   methods: {
-    addCart () {
+    addCart (food, event) {
       if (!this.food.count) {
         this.$set(this.food, 'count', 1)
-        console.log(this.food)
       } else {
         this.food.count++
-        console.log(this.food)
       }
+      this.$emit('buyCartBall', {dom: event.target, ico: food.icon}) // 传递参数给父组件
     },
     reduce () {
       if (!this.food.count) return
       this.food.count--
-      console.log(this.food)
+      // console.log(this.food)
     }
   }
 }

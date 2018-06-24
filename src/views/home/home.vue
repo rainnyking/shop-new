@@ -1,21 +1,7 @@
 <template>
   <div class="home">
     <div class="bannerbox">
-      <div class="searchbox">
-        <form action="/">
-          <van-search
-            v-model="searchValu"
-            show-action
-            background=""
-            placeholder="请输入商品名称"
-            @search="onSearch"
-          >
-            <div slot="action" @click="onSearch">
-              <div class="searchbtn">搜索</div>
-            </div>
-          </van-search>
-        </form>
-      </div>
+      <search-box>搜索</search-box>
       <div class="banner-back" v-for="(item,index) in seller.banner" :key="index" v-show="index === bannerItemsIndex">
         <img :src="item">
       </div>
@@ -33,7 +19,7 @@
             </van-swipe-item>
           </van-swipe>
         </div>
-        <div class="banner-bottom" :class="{active:searchBoxBg}">
+        <div class="banner-bottom" :class="{active:bannerText}">
           <van-row>
             <van-col span="8" v-for="item in tipItems" :key="item.id">
               <div class="bottom-item">
@@ -48,22 +34,30 @@
           <!--<span class="des">SPECIAL ALBUM</span>-->
         <!--</div>-->
         <div class="pro-home">
-          <div class="home-item" v-for="(item, index) in goods" :key="index">
+          <div class="home-item" v-for="(item, index) in getCartGoods" :key="index">
             <div class="content">
               <div class="header">
                 <img :src="item.img">
               </div>
               <div class="goods-box">
                 <van-row gutter="20">
-                  <van-col span="8" v-for="food in item.foods" :key="food.id">
-                    <div class="goods-item">
+                  <van-col span="8" v-for="(food,index) in item.foods" :key="index">
+                    <div class="goods-item" @click="gothink(food.id)">
                       <div class="foods-img-box">
                         <img :src="food.icon" >
                       </div>
                       <div class="title">{{food.name}}</div>
-                      <div class="money"><em>￥</em>{{food.price}}<em>/{{food.unit}}</em></div>
-                      <buy-ball :food="food" ref="cartFood" v-show="food.count > 0">添加加减按钮</buy-ball>
-                      <div class="buy" v-show="!food.count || food.count === 0" @click="buyCart(food)">+ 购物车</div>
+                      <div class="money">
+                        <div class="pice-box">
+                          <span class="samll">￥</span>
+                          <span class="pice">{{food.price}}</span>
+                          <span class="samll unit">/{{food.unit}}</span>
+                        </div>
+                        <div class="buy-box" @click.stop.prevent="buyCart(food, $event)">
+                          <div class="buy"><van-icon name="cart" /></div>
+                        </div>
+                      </div>
+                      <!--<buy-ball :food="food" ref="cartFood" >添加加减按钮</buy-ball>-->
                     </div>
                   </van-col>
                 </van-row>
@@ -77,16 +71,17 @@
 </template>
 
 <script>
-import buyBall from '../buyBall/buyball'
 import BScroll from 'better-scroll'
 import { getDataGoodsApi } from '@/utils/api'
+import { mapGetters, mapActions } from 'vuex'
+import searchBox from '../search/search'
+import buyBall from '../buyBall/buyball'
 export default {
   name: 'home',
   data () {
     return {
-      searchValu: '',
       seller: {},
-      goods: [],
+      // goods: [],
       bannerItemsIndex: 0,
       tipItems: [
         {ico: 'iconfont icon-shuye', title: '新鲜食材'},
@@ -100,7 +95,8 @@ export default {
     this.getData()
   },
   computed: {
-    searchBoxBg () {
+    ...mapGetters(['getCartGoods']),
+    bannerText () {
       if (this.scrollY < -40) {
         return true
       } else {
@@ -109,19 +105,27 @@ export default {
     }
   },
   methods: {
-    onSearch () {
-      alert('搜索')
-      console.log(this.searchValu)
-    },
-    onCancel () {
-      alert('键盘')
-    },
+    ...mapActions(['setCartGoods']),
     getData () {
       getDataGoodsApi().then(res => {
         res = res.data
-        console.log(res)
+        // console.log(res)
         this.seller = res.seller
-        this.goods = res.goods
+        let oldGoodsData = this.getCartGoods
+        let newGoodsData = []
+        if (oldGoodsData.length > 0) {
+          res.goods.forEach(function (item, index) {
+            item.foods.forEach(function (food, findex) {
+              if (oldGoodsData[index].foods[findex].count) {
+                food.count = oldGoodsData[index].foods[findex].count
+              }
+            })
+          })
+          newGoodsData = res.goods
+        } else {
+          newGoodsData = res.goods
+        }
+        this.setCartGoods(newGoodsData)
         console.log(res.goods)
         this.$nextTick(() => {
           this._initScroll()
@@ -142,18 +146,35 @@ export default {
       })
     },
     bannerChange (index) {
-      console.log(typeof (index)) // index 为数字类型
+      // console.log(typeof (index)) // index 为数字类型
+      // console.log(index)
       this.bannerItemsIndex = index// 两者相等要转成同类型
     },
-    buyCart (food) {
-      // console.log(food.count)
+    buyCart (food, event) {
       if (!food.count) {
         this.$set(food, 'count', 1)
+      } else {
+        food.count++
+      }
+      this.$emit('cartBall', {dom: event.target, ico: food.icon})
+      // console.log(food.count)
+    },
+    gothink (id) {
+      console.log(id)
+      this.$router.push('/food/' + id)
+    }
+  },
+  watch: {
+    'bannerItemsIndex' (newVal, oldVal) {
+      if (!oldVal) {
+        return 0
+      } else {
+        return newVal
       }
     }
   },
   components: {
-    buyBall
+    buyBall, searchBox
   }
 }
 </script>
@@ -161,20 +182,6 @@ export default {
 <style lang="scss" scoped>
 .home {
   .bannerbox {
-    /*position: relative;*/
-    .searchbox {
-      position: relative;
-      width: 100%;
-      z-index: 99;
-      .searchbtn {
-        width: 50px;
-        text-align: center;
-        color: #fff;
-      }
-      &.active {
-        /*background-color: #ff7b00;*/
-      }
-    }
     .banner-back {
       position: absolute;
       top: 0;
@@ -273,34 +280,40 @@ export default {
             white-space: nowrap;
           }
           .money {
-            font-size: 16px;
+            font-size: 14px;
             text-align: center;
-            padding: 8px 0;
+            padding: 8px 0px;
             color: #FF9800;
-            font-weight: bold;
-            em {
-              font-size: 10px;
-              font-style: normal;
-              font-weight: normal;
+            display: flex;
+            align-items: center;
+            .pice-box {
+              text-align: left;
+              flex: 1;
+              font-size: 14px;
+              .samll{
+                font-size: 10px;
+                &.unit {
+                  margin-left: -3px;
+                }
+              }
+              .pice {
+                margin-left: -3px;
+                font-weight: bold;
+              }
             }
           }
-          .buy {
-            width: 80%;
-            margin: 4px auto;
-            height: 22px;
-            line-height: 24px;
-            padding: 0 12px;
-            box-sizing: border-box;
-            border-radius: 12px;
-            font-size: 10px;
-            text-align: center;
-            color: #fff;
-            background: #17b356;
-            &.fade-enter-active, &.fade-leave-active {
-              transition: opacity .5s
-            }
-            &.fade-enter, &.fade-leave-active {
-              opacity: 0
+          .buy-box {
+            padding: 2px;
+            .buy {
+              width: 22px;
+              height: 22px;
+              line-height: 27px;
+              border-radius: 50%;
+              font-size: 11px;
+              text-align: center;
+              text-align: center;
+              color: #fff;
+              background: #17b356;
             }
           }
         }
