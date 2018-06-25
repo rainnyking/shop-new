@@ -6,7 +6,11 @@
     <div class="class-content">
       <div class="menu-wrapper" ref="menuWrapper">
         <ul>
-          <li class="menu-item" v-for="item in getCartGoods" :key="item.id">
+          <li class="menu-item"
+              v-for="(item, index) in getCartGoods"
+              :key="index"
+              :class="{'current': index === currentIndex}"
+              @click="foodScorllTo(index)">
             <span class="text border-1px">
               {{item.name}}
             </span>
@@ -53,13 +57,29 @@ import searchBox from '../search/search'
 import ballBuy from '../buyBall/buyball'
 export default {
   name: 'class',
-  computed: {
-    ...mapGetters(['getCartGoods'])
+  data () {
+    return {
+      foodHeight: [],
+      scorllY: ''
+    }
   },
   mounted () {
     this.$nextTick(() => {
       this.initScorll()
     })
+  },
+  computed: {
+    ...mapGetters(['getCartGoods']),
+    currentIndex () {
+      for (let i = 0; i < this.foodHeight.length; i++) {
+        let firstHeight = this.foodHeight[i]
+        let secHeight = this.foodHeight[i + 1]
+        if (!secHeight || (this.scorllY >= firstHeight && this.scorllY < secHeight)) {
+          return i
+        }
+      }
+      return 0
+    }
   },
   methods: {
     buyballDom (msg) {
@@ -70,8 +90,29 @@ export default {
         click: true
       })
       this.foodScorll = new BScroll(this.$refs.foodWrapper, {
-        click: true
+        click: true,
+        probeType: 3
       })
+      this.heightList()
+      let _this = this
+      this.foodScorll.on('scroll', function (pos) {
+        _this.scorllY = Math.abs(Math.round(pos.y))
+      })
+    },
+    heightList () {
+      let liDom = this.$refs.foodWrapper.getElementsByClassName('food-list-hook')
+      let heightSun = 0
+      this.foodHeight.push(heightSun)
+      for (let i = 0; i < liDom.length; i++) {
+        let heightItem = liDom[i].offsetHeight
+        heightSun += heightItem
+        this.foodHeight.push(heightSun)
+      }
+      // console.log(this.foodHeight)
+    },
+    foodScorllTo (index) {
+      let liDom = this.$refs.foodWrapper.getElementsByClassName('food-list-hook')
+      this.foodScorll.scrollToElement(liDom[index], 300)
     }
   },
   components: {

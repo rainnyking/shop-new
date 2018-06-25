@@ -2,8 +2,8 @@
   <div class="home">
     <div class="bannerbox">
       <search-box>搜索</search-box>
-      <div class="banner-back" v-for="(item,index) in seller.banner" :key="index" v-show="index === bannerItemsIndex">
-        <img :src="item">
+      <div class="banner-back">
+        <img :src="bannerbg">
       </div>
     </div>
     <div class="home-main-content" ref="homeGoods">
@@ -82,7 +82,7 @@ export default {
     return {
       seller: {},
       // goods: [],
-      bannerItemsIndex: 0,
+      bannerbg: '',
       tipItems: [
         {ico: 'iconfont icon-shuye', title: '新鲜食材'},
         {ico: 'iconfont icon-lightning', title: '快速送达'},
@@ -111,6 +111,7 @@ export default {
         res = res.data
         // console.log(res)
         this.seller = res.seller
+        this.bannerbg = this.seller.banner[0]
         let oldGoodsData = this.getCartGoods
         let newGoodsData = []
         if (oldGoodsData.length > 0) {
@@ -148,7 +149,7 @@ export default {
     bannerChange (index) {
       // console.log(typeof (index)) // index 为数字类型
       // console.log(index)
-      this.bannerItemsIndex = index// 两者相等要转成同类型
+      this.bannerbg = this.seller.banner[index]// 两者相等要转成同类型
     },
     buyCart (food, event) {
       if (!food.count) {
@@ -165,13 +166,13 @@ export default {
     }
   },
   watch: {
-    'bannerItemsIndex' (newVal, oldVal) {
-      if (!oldVal) {
-        return 0
-      } else {
-        return newVal
-      }
-    }
+    // 'bannerItemsIndex' (newVal, oldVal) {
+    //   if (!oldVal) {
+    //     return 0
+    //   } else {
+    //     return newVal
+    //   }
+    // }
   },
   components: {
     buyBall, searchBox
