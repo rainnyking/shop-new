@@ -107,6 +107,7 @@ export default {
   methods: {
     ...mapActions(['setCartGoods']),
     getData () {
+      console.log('0000000000')
       getDataGoodsApi().then(res => {
         res = res.data
         // console.log(res)
@@ -173,6 +174,7 @@ export default {
     //     return newVal
     //   }
     // }
+    '$route': 'getData'
   },
   components: {
     buyBall, searchBox

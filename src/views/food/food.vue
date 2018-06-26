@@ -2,10 +2,18 @@
   <div>
     <div class="food">
       <div class="food-content">
-        <div class="image-header">
-          <img :src="food.icon">
-          <div class="back"><i class="icon-arrow_lift"></i></div>
+        <div class="food-image-banner">
+          <van-swipe :autoplay="3000">
+            <van-swipe-item v-for="(item, index) in food.image" :key="index">
+              <img :src="item" />
+            </van-swipe-item>
+          </van-swipe>
+          <div class="back"><van-icon name="arrow-left" /></div>
         </div>
+        <!--<div class="image-header">-->
+          <!---->
+          <!--<div class="back"><i class="icon-arrow_lift"></i></div>-->
+        <!--</div>-->
         <div class="content">
           <h1 class="title">{{food.name}}</h1>
           <div class="detail">
@@ -103,17 +111,11 @@ export default {
     width: 100%;
     background: #fff;
     .food-content {
-      .image-header {
+      .food-image-banner {
         position: relative;
-        width: 100%;
-        height: 0;
-        padding-top: 100%;
         img {
-          position: absolute;
-          top: 0;
-          left: 0;
+          display: block;
           width: 100%;
-          height: 100%;
         }
         .back {
           position: absolute;
@@ -125,6 +127,19 @@ export default {
             font-size: 20px;
             color: #fff;
           }
+        }
+      }
+      .image-header {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-top: 100%;
+        img {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
         }
       }
       .content {
