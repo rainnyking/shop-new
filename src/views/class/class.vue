@@ -22,7 +22,7 @@
           <li class="food-list food-list-hook" v-for="goods in getCartGoods" :key="goods.id">
             <h1 class="title">{{goods.name}}</h1>
             <ul>
-              <li class="food-item border-1px" v-for="(food, index) in goods.foods" :key="index">
+              <li class="food-item border-1px" v-for="(food, index) in goods.foods" :key="index" @click="gothink(food.id)">
                 <div class="icon">
                   <img :src="food.icon" width="57" height="57">
                 </div>
@@ -113,6 +113,10 @@ export default {
     foodScorllTo (index) {
       let liDom = this.$refs.foodWrapper.getElementsByClassName('food-list-hook')
       this.foodScorll.scrollToElement(liDom[index], 300)
+    },
+    gothink (id) {
+      console.log(id)
+      this.$router.push('/food/' + id)
     }
   },
   components: {

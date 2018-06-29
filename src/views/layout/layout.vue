@@ -14,12 +14,41 @@
         </transition>
       </div>
     </div>
-    <van-tabbar v-model="menuActive">
-      <van-tabbar-item icon="home" to="/home" replace>首页</van-tabbar-item>
-      <van-tabbar-item icon="more-o" to="/class" replace>分类</van-tabbar-item>
-      <van-tabbar-item icon="cart" to="/cart" :info="cartCount === 0 ? '': cartCount" replace>购物车</van-tabbar-item>
-      <van-tabbar-item icon="contact" to="/mine" replace>我的</van-tabbar-item>
-    </van-tabbar>
+    <div class="fotterBox">
+      <ul class="tab">
+        <router-link to="/home" tag="li" replace class="tab-item" active-class="active">
+          <div class="icon">
+            <van-icon name="home" />
+          </div>
+          <div class="text">首页</div>
+        </router-link>
+        <router-link to="/class" tag="li" replace class="tab-item" active-class="active">
+          <div class="icon">
+            <van-icon name="more-o" />
+          </div>
+          <div class="text">分类</div>
+        </router-link>
+        <router-link to="/cart" tag="li" replace class="tab-item" active-class="active">
+          <div class="icon">
+            <van-icon name="cart" />
+            <div class="smalltext">{{ cartCount === 0 ? '': cartCount }}</div>
+          </div>
+          <div class="van-tabbar-item__text">购物车</div>
+        </router-link>
+        <router-link to="/mine" tag="li" replace class="tab-item" active-class="active">
+          <div class="icon">
+            <van-icon name="contact" />
+          </div>
+          <div class="text">我的</div>
+        </router-link>
+      </ul>
+    </div>
+    <!--<van-tabbar v-model="menuActive">-->
+      <!--<van-tabbar-item icon="home" to="/home" replace>首页</van-tabbar-item>-->
+      <!--<van-tabbar-item icon="more-o" to="/class" replace>分类</van-tabbar-item>-->
+      <!--<van-tabbar-item icon="cart" to="/cart" :info="cartCount === 0 ? '': cartCount" replace>购物车</van-tabbar-item>-->
+      <!--<van-tabbar-item icon="contact" to="/mine" replace>我的</van-tabbar-item>-->
+    <!--</van-tabbar>-->
   </div>
 </template>
 
@@ -156,6 +185,65 @@ export default {
         transition: all .4s cubic-bezier(.49, -0.29, .75, .41);
         .inner {
           transition: all .4s linear;
+        }
+      }
+    }
+  }
+  .fotterBox {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    height: 50px;
+    .tab {
+      display: flex;
+      align-items: center;
+      .tab-item {
+        -webkit-box-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+        color: #666;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        line-height: 1;
+        font-size: 12px;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        height: 50px;
+        .icon {
+          font-size: 18px;
+          margin:2px 0;
+          position: relative;
+          .smalltext {
+            color: #fff;
+            left: 100%;
+            top: -.5em;
+            font-size: .5em;
+            padding: 0 .3em;
+            text-align: center;
+            min-width: 1.2em;
+            line-height: 1.2;
+            position: absolute;
+            border-radius: .6em;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            background-color: #f44;
+            -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+            font-family: PingFang SC,Helvetica Neue,Arial,sans-serif;
+          }
+        }
+        &.active {
+          color: #17b356;
         }
       }
     }

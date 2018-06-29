@@ -91,7 +91,10 @@ export default {
       scrollY: ''
     }
   },
-  mounted () {
+  // mounted () {
+  //   this.getData()
+  // },
+  activated () {
     this.getData()
   },
   computed: {
@@ -107,7 +110,6 @@ export default {
   methods: {
     ...mapActions(['setCartGoods']),
     getData () {
-      console.log('0000000000')
       getDataGoodsApi().then(res => {
         res = res.data
         // console.log(res)
@@ -153,6 +155,7 @@ export default {
       this.bannerbg = this.seller.banner[index]// 两者相等要转成同类型
     },
     buyCart (food, event) {
+      console.log(food)
       if (!food.count) {
         this.$set(food, 'count', 1)
       } else {
@@ -174,7 +177,7 @@ export default {
     //     return newVal
     //   }
     // }
-    '$route': 'getData'
+    // '$route': 'getData'
   },
   components: {
     buyBall, searchBox
