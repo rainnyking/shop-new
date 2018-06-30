@@ -1,19 +1,19 @@
 <template>
   <div>
     <div class="food">
+      <div class="foodHeader">
+        <div class="left">返回</div>
+        <div class="title">{{food.name}}</div>
+        <div class="right"></div>
+      </div>
       <div class="food-content">
         <div class="food-image-banner">
           <van-swipe :autoplay="3000">
             <van-swipe-item v-for="(item, index) in food.image" :key="index">
-              <img :src="item" />
+              <img v-lazy="item" />
             </van-swipe-item>
           </van-swipe>
-          <div class="back"><van-icon name="arrow-left" /></div>
         </div>
-        <!--<div class="image-header">-->
-          <!---->
-          <!--<div class="back"><i class="icon-arrow_lift"></i></div>-->
-        <!--</div>-->
         <div class="content">
           <h1 class="title">{{food.name}}</h1>
           <div class="detail">
@@ -103,13 +103,26 @@ export default {
 <style lang="scss" scoped>
   @import "../../styles/mixins";
   .food {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 48px;
-    z-index: 30;
-    width: 100%;
-    background: #fff;
+    /*position: fixed;*/
+    /*left: 0;*/
+    /*top: 0;*/
+    /*bottom: 48px;*/
+    /*z-index: 30;*/
+    /*width: 100%;*/
+    /*background: #fff;*/
+    .foodHeader {
+      display: flex;
+      height: 46px;
+      align-items: center;
+      text-align: center;
+      line-height: 46px;
+      .title {
+        width: 60%;
+      }
+      .left,.right {
+        flex: 1;
+      }
+    }
     .food-content {
       .food-image-banner {
         position: relative;

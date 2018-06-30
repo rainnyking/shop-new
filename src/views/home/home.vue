@@ -12,7 +12,7 @@
           <van-swipe :autoplay="5000" @change="bannerChange">
             <van-swipe-item v-for="(item,index) in seller.banner" :key="index">
               <div class="banner-item">
-                <div class="img-box">
+                <div class="img-box" v-lazy:background-image="item">
                   <img :src="item">
                 </div>
               </div>
@@ -36,7 +36,7 @@
         <div class="pro-home">
           <div class="home-item" v-for="(item, index) in getCartGoods" :key="index">
             <div class="content">
-              <div class="header">
+              <div class="header" v-lazy:background-image="item.img">
                 <img :src="item.img">
               </div>
               <div class="goods-box">
@@ -44,7 +44,7 @@
                   <van-col span="8" v-for="(food,index) in item.foods" :key="index">
                     <div class="goods-item" @click="gothink(food.id)">
                       <div class="foods-img-box">
-                        <img :src="food.icon" >
+                        <img v-lazy="food.icon">
                       </div>
                       <div class="title">{{food.name}}</div>
                       <div class="money">
@@ -91,12 +91,12 @@ export default {
       scrollY: ''
     }
   },
-  // mounted () {
-  //   this.getData()
-  // },
-  activated () {
+  mounted () {
     this.getData()
   },
+  // activated () {
+  //   this.getData()
+  // },
   computed: {
     ...mapGetters(['getCartGoods']),
     bannerText () {
@@ -217,6 +217,12 @@ export default {
         display: block;
         width: 100%;
       }
+      &[lazy="error"] {
+        width: 100%;
+        height: 140px;
+        background-position: center center;
+        background-size: 75%;
+      }
     }
   }
   .home-main-content {
@@ -264,6 +270,13 @@ export default {
           display: block;
           width: 100%;
         }
+        &[lazy="error"] {
+          width: 100%;
+          height: 114px;
+          background-position: center center;
+          background-size: 75%;
+          border-bottom: 1px solid #f6f6f6;
+        }
       }
       .goods-box {
         padding: 0.5px 10.5px 10px;
@@ -273,6 +286,21 @@ export default {
             img {
               width: 100%;
               display: block;
+            }
+            img[lazy=loading] {
+              width: 100%;
+              display: block;
+              /*your style here*/
+            }
+            img[lazy=error] {
+              width: 100%;
+              display: block;
+              /*your style here*/
+            }
+            img[lazy=loaded] {
+              width: 100%;
+              display: block;
+              /*your style here*/
             }
           }
           .title {
