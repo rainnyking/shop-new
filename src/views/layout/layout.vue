@@ -14,7 +14,7 @@
         </transition>
       </div>
     </div>
-    <div class="fotterBox">
+    <div class="fotterBox b-h-1px">
       <ul class="tab">
         <router-link to="/home" tag="li" replace class="tab-item" active-class="active">
           <div class="icon">
@@ -159,6 +159,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @import "../../styles/mixins";
 .wap {
   .van-tabbar-item--active {
     color: #17b356;
