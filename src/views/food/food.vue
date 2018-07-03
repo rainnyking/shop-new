@@ -125,22 +125,13 @@
           <!--<split>间隔</split>-->
         </div>
       </div>
-      <div class="food-bottom b-h-1px">
-        <div class="bottom-item">
-          <span>aa</span>
-        </div>
-        <div class="bottom-item">
-          <span>aa</span>
-        </div>
-        <div class="bottom-item-cart">
-          <div>加入购物车</div>
-        </div>
-      </div>
     </div>
+    <food-bottom>加入购物车</food-bottom>
   </div>
 </template>
 
 <script>
+import foodBottom from './children/foodBottom'
 import split from '../split/split'
 import BScroll from 'better-scroll'
 import buyBall from '../buyBall/buyball'
@@ -230,7 +221,7 @@ export default {
     '$route': 'getFoodListData'
   },
   components: {
-    buyBall, split
+    buyBall, split, foodBottom
   }
 }
 </script>
@@ -505,20 +496,6 @@ export default {
             }
           }
         }
-      }
-    }
-    .food-bottom {
-      position: fixed;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      height: 50px;
-      display: flex;
-      .bottom-item {
-        flex: 1;
-      }
-      .bottom-item-cart {
-        width: 50%;
       }
     }
     .food-more {
