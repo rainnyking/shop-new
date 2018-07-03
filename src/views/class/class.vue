@@ -52,7 +52,7 @@
 
 <script>
 import BScroll from 'better-scroll'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import searchBox from '../search/search'
 import ballBuy from '../buyBall/buyball'
 export default {
@@ -64,9 +64,7 @@ export default {
     }
   },
   mounted () {
-    this.$nextTick(() => {
-      this.initScorll()
-    })
+    this.getFoodList()
   },
   computed: {
     ...mapGetters(['getCartGoods']),
@@ -82,8 +80,15 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setCartGoods']),
     buyballDom (msg) {
       this.$emit('cartBall', msg)
+    },
+    getFoodList () {
+      this.setCartGoods()
+      this.$nextTick(() => {
+        this.initScorll()
+      })
     },
     initScorll () {
       this.menuScorll = new BScroll(this.$refs.menuWrapper, {
@@ -116,7 +121,8 @@ export default {
     },
     gothink (id) {
       console.log(id)
-      this.$router.push('/food/' + id)
+      console.log(this.scorllY)
+      // this.$router.push('/food/' + id)
     }
   },
   components: {

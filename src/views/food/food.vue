@@ -19,7 +19,7 @@
           <div class="food-image-banner">
             <van-swipe :autoplay="3000">
               <van-swipe-item v-for="(item, index) in food.image" :key="index">
-                <img v-lazy="item" />
+                <img v-lazy="item" :key="item" />
               </van-swipe-item>
             </van-swipe>
           </div>
@@ -65,38 +65,64 @@
             <p class="text">{{food.info}}</p>
           </div>
           <split>间隔</split>
-          <div class="rating">
-            <h1 class="title">商品评价</h1>
-            <div class="rating-wrapper">
-              <ul style="">
-                <li class="rating-item border-1px">
-                  <div class="user"><span class="name">3******c</span>
-                    <img width="12" height="12" src="http://static.galileo.xiaojukeji.com/static/tms/default_header.png" class="avatar">
+          <div class="food-more">
+            <div class="food-title b-t-1px">
+              <span>更多选择</span>
+            </div>
+            <div class="goods-box">
+              <van-row gutter="20">
+                <van-col span="8" v-for="(item,index) in foodList.foods" v-if="index < 6 && item.id !== $route.query.id" :key="index">
+                  <div class="goods-item" @click="goOther(foodList.id, item.id)">
+                    <div class="foods-img-box">
+                      <img v-lazy="item.icon">
+                    </div>
+                    <div class="title">{{item.name}}</div>
+                    <div class="money">
+                      <div class="pice-box">
+                        <span class="samll">￥</span>
+                        <span class="pice">{{item.price}}</span>
+                        <span class="samll unit">/{{item.unit}}</span>
+                      </div>
+                      <div class="buy-box" @click.stop.prevent="buyCart(item)">
+                        <div class="buy"><van-icon name="cart" /></div>
+                      </div>
+                    </div>
+                    <!--<buy-ball :food="food" ref="cartFood" >添加加减按钮</buy-ball>-->
                   </div>
-                  <div class="time">2016-07-23 21:52</div>
-                  <p class="text"><span class="icon-thumb_up"></span>很喜欢的粥
-                  </p>
-                </li>
-                <li class="rating-item border-1px" style="display: none;">
-                  <div class="user"><span class="name">2******3</span> <img width="12" height="12" src="http://static.galileo.xiaojukeji.com/static/tms/default_header.png" class="avatar"></div>
-                  <div class="time">2016-07-23 18:54</div>
-                  <p class="text"><span class="icon-thumb_up"></span>
-                  </p>
-                </li>
-                <li class="rating-item border-1px" style="display: none;">
-                  <div class="user"><span class="name">3******b</span> <img width="12" height="12" src="http://static.galileo.xiaojukeji.com/static/tms/default_header.png" class="avatar"></div>
-                  <div class="time">2016-07-23 16:19</div>
-                  <p class="text"><span class="icon-thumb_down"></span>
-                  </p>
-                </li>
-              </ul>
-              <div class="no-rating" style="display: none;">暂无评价</div>
+                </van-col>
+              </van-row>
             </div>
           </div>
-          <split>间隔</split>
-          <div>
-            <div v-for="item in foodList" :key="item.id">{{item.name}}</div>
-          </div>
+          <!--<split>间隔</split>-->
+          <!--<div class="rating">-->
+            <!--<h1 class="title">商品评价</h1>-->
+            <!--<div class="rating-wrapper">-->
+              <!--<ul style="">-->
+                <!--<li class="rating-item border-1px">-->
+                  <!--<div class="user"><span class="name">3******c</span>-->
+                    <!--<img width="12" height="12" src="http://static.galileo.xiaojukeji.com/static/tms/default_header.png" class="avatar">-->
+                  <!--</div>-->
+                  <!--<div class="time">2016-07-23 21:52</div>-->
+                  <!--<p class="text"><span class="icon-thumb_up"></span>很喜欢的粥-->
+                  <!--</p>-->
+                <!--</li>-->
+                <!--<li class="rating-item border-1px" style="display: none;">-->
+                  <!--<div class="user"><span class="name">2******3</span> <img width="12" height="12" src="http://static.galileo.xiaojukeji.com/static/tms/default_header.png" class="avatar"></div>-->
+                  <!--<div class="time">2016-07-23 18:54</div>-->
+                  <!--<p class="text"><span class="icon-thumb_up"></span>-->
+                  <!--</p>-->
+                <!--</li>-->
+                <!--<li class="rating-item border-1px" style="display: none;">-->
+                  <!--<div class="user"><span class="name">3******b</span> <img width="12" height="12" src="http://static.galileo.xiaojukeji.com/static/tms/default_header.png" class="avatar"></div>-->
+                  <!--<div class="time">2016-07-23 16:19</div>-->
+                  <!--<p class="text"><span class="icon-thumb_down"></span>-->
+                  <!--</p>-->
+                <!--</li>-->
+              <!--</ul>-->
+              <!--<div class="no-rating" style="display: none;">暂无评价</div>-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<split>间隔</split>-->
         </div>
       </div>
       <div class="food-bottom b-h-1px">
@@ -124,7 +150,7 @@ export default {
   data () {
     return {
       food: {},
-      foodList: [],
+      foodList: {},
       scrollY: ''
     }
   },
@@ -138,18 +164,22 @@ export default {
       }
     }
   },
-  mounted () {
-    this.getFoodContentData()
+  created () {
+    this.getFoodListData()
     console.log(this.foodList)
   },
   methods: {
-    getFoodContentData () {
-      let id = this.$route.query.id
-      let pid = this.$route.query.pid
-      console.log(pid)
-      this.food = this.getFoodContent(id)
-      this.foodList = this.getFoodList(pid)
+    getFoodListData () {
       let _this = this
+      let uid = this.$route.query.id
+      let pid = this.$route.query.pid
+      this.foodList = this.getFoodList(pid)
+      // this.foodList.foods.forEach(function (item) {
+      //   if (parseInt(item.id) === parseInt(uid)) {
+      //     _this.food = item
+      //   }
+      // })
+      this.food = this.getFoodContent(uid)
       this.$nextTick(function () {
         _this.initScroll()
       })
@@ -162,11 +192,30 @@ export default {
       let _this = this
       this.foodContentScroll.on('scroll', function (pos) {
         _this.scrollY = Math.round(pos.y)
-        console.log(_this.scrollY)
+        // console.log(_this.scrollY)
       })
     },
     gothink (to) {
       this.$router.push(to)
+    },
+    goOther (pid, id) {
+      this.$router.replace({
+        path: '/food',
+        query: {
+          pid: pid,
+          id: id
+        }
+      })
+    },
+    buyCart (food) {
+      console.log(food)
+      if (!food.count) {
+        this.$set(food, 'count', 1)
+      } else {
+        food.count++
+      }
+      // this.$emit('cartBall', {dom: event.target, ico: food.icon})
+      // console.log(food.count)
     },
     goback () {
       this.$router.go(-1)
@@ -177,6 +226,9 @@ export default {
       }
     }
   },
+  watch: {
+    '$route': 'getFoodListData'
+  },
   components: {
     buyBall, split
   }
@@ -186,13 +238,6 @@ export default {
 <style lang="scss" scoped>
   @import "../../styles/mixins";
   .food {
-    /*position: fixed;*/
-    /*left: 0;*/
-    /*top: 0;*/
-    /*bottom: 48px;*/
-    /*z-index: 30;*/
-    /*width: 100%;*/
-    /*background: #fff;*/
     .foodHeader {
       display: flex;
       height: 46px;
@@ -470,10 +515,100 @@ export default {
       height: 50px;
       display: flex;
       .bottom-item {
-
+        flex: 1;
       }
       .bottom-item-cart {
-        flex: 1;
+        width: 50%;
+      }
+    }
+    .food-more {
+      .food-title {
+        position: relative;
+        font-size: 14px;
+        text-align: center;
+        color: #17b356;
+        margin-bottom: 10px;
+        span {
+          display: inline-block;
+          height: 44px;
+          line-height: 46px;
+          padding: 0 10px;
+          border-bottom: 2px solid #17b356;
+        }
+      }
+      .goods-box {
+        padding: 0.5px 10.5px 10px;
+        .goods-item {
+          .foods-img-box {
+            padding: 8px;
+            img {
+              width: 100%;
+              display: block;
+            }
+            img[lazy=loading] {
+              width: 100%;
+              display: block;
+              /*your style here*/
+            }
+            img[lazy=error] {
+              width: 100%;
+              display: block;
+              /*your style here*/
+            }
+            img[lazy=loaded] {
+              width: 100%;
+              display: block;
+              /*your style here*/
+            }
+          }
+          .title {
+            max-height: 20px;
+            line-height: 16px;
+            font-size: 12px;
+            color: #333333;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          .money {
+            font-size: 14px;
+            text-align: center;
+            padding: 8px 0px;
+            color: #FF9800;
+            display: flex;
+            align-items: center;
+            .pice-box {
+              text-align: left;
+              flex: 1;
+              font-size: 14px;
+              .samll{
+                font-size: 10px;
+                &.unit {
+                  margin-left: -3px;
+                }
+              }
+              .pice {
+                margin-left: -3px;
+                font-weight: bold;
+              }
+            }
+          }
+          .buy-box {
+            padding: 2px;
+            .buy {
+              width: 22px;
+              height: 22px;
+              line-height: 27px;
+              border-radius: 50%;
+              font-size: 11px;
+              text-align: center;
+              text-align: center;
+              color: #fff;
+              background: #17b356;
+            }
+          }
+        }
       }
     }
   }

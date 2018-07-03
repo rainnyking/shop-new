@@ -42,7 +42,7 @@
               <div class="goods-box">
                 <van-row gutter="20">
                   <van-col span="8" v-for="(food,index) in item.foods" :key="index">
-                    <div class="goods-item" @click="gothink(food.id, item.id)">
+                    <div class="goods-item" @click="gothink(item.id, food.id)">
                       <div class="foods-img-box">
                         <img v-lazy="food.icon">
                       </div>
@@ -110,27 +110,26 @@ export default {
   methods: {
     ...mapActions(['setCartGoods']),
     getData () {
+      this.setCartGoods()
       getDataGoodsApi().then(res => {
         res = res.data
-        // console.log(res)
         this.seller = res.seller
         this.bannerbg = this.seller.banner[0]
-        let oldGoodsData = this.getCartGoods
-        let newGoodsData = []
-        if (oldGoodsData.length > 0) {
-          res.goods.forEach(function (item, index) {
-            item.foods.forEach(function (food, findex) {
-              if (oldGoodsData[index].foods[findex].count) {
-                food.count = oldGoodsData[index].foods[findex].count
-              }
-            })
-          })
-          newGoodsData = res.goods
-        } else {
-          newGoodsData = res.goods
-        }
-        this.setCartGoods(newGoodsData)
-        console.log(res.goods)
+        // let oldGoodsData = this.getCartGoods
+        // let newGoodsData = []
+        // if (oldGoodsData.length > 0) {
+        //   res.goods.forEach(function (item, index) {
+        //     item.foods.forEach(function (food, findex) {
+        //       if (oldGoodsData[index].foods[findex].count) {
+        //         food.count = oldGoodsData[index].foods[findex].count
+        //       }
+        //     })
+        //   })
+        //   newGoodsData = res.goods
+        // } else {
+        //   newGoodsData = res.goods
+        // }
+        // this.setCartGoods(newGoodsData)
         this.$nextTick(() => {
           this._initScroll()
         })
@@ -164,9 +163,9 @@ export default {
       this.$emit('cartBall', {dom: event.target, ico: food.icon})
       // console.log(food.count)
     },
-    gothink (id, pid) {
-      console.log(id)
-      console.log(pid)
+    gothink (pid, id) {
+      // console.log(id)
+      // console.log(pid)
       this.$router.push({
         path: '/food',
         query: {

@@ -15,8 +15,7 @@ export default{
   .split {
     width: 100%;
     height: 10px;
-    border-top: 1px solid rgba(7, 17, 27, 0.06);
-    border-bottom: 1px solid rgba(7, 17, 27, 0.06);
     background: #f6f6f6;
+    position: relative;
   }
 </style>

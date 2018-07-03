@@ -29,6 +29,18 @@
     background-color: #dadada;
   }
 }
+.b-t-1px {
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    transform: scaleY(.5);
+    background-color: #dadada;
+  }
+}
 /*2倍和3倍图片*/
 @mixin bg-image($url){
   background-image: url($url + "@2x.png");
