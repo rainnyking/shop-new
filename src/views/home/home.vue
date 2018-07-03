@@ -42,7 +42,7 @@
               <div class="goods-box">
                 <van-row gutter="20">
                   <van-col span="8" v-for="(food,index) in item.foods" :key="index">
-                    <div class="goods-item" @click="gothink(food.id)">
+                    <div class="goods-item" @click="gothink(food.id, item.id)">
                       <div class="foods-img-box">
                         <img v-lazy="food.icon">
                       </div>
@@ -164,9 +164,16 @@ export default {
       this.$emit('cartBall', {dom: event.target, ico: food.icon})
       // console.log(food.count)
     },
-    gothink (id) {
+    gothink (id, pid) {
       console.log(id)
-      this.$router.push('/food/' + id)
+      console.log(pid)
+      this.$router.push({
+        path: '/food',
+        query: {
+          pid: pid,
+          id: id
+        }
+      })
     }
   },
   watch: {

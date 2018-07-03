@@ -93,6 +93,10 @@
               <div class="no-rating" style="display: none;">暂无评价</div>
             </div>
           </div>
+          <split>间隔</split>
+          <div>
+            <div v-for="item in foodList" :key="item.id">{{item.name}}</div>
+          </div>
         </div>
       </div>
       <div class="food-bottom b-h-1px">
@@ -120,11 +124,12 @@ export default {
   data () {
     return {
       food: {},
+      foodList: [],
       scrollY: ''
     }
   },
   computed: {
-    ...mapGetters(['getFoodContent']),
+    ...mapGetters(['getFoodContent', 'getFoodList']),
     headerActive () {
       if (this.scrollY < -10) {
         return true
@@ -135,11 +140,15 @@ export default {
   },
   mounted () {
     this.getFoodContentData()
+    console.log(this.foodList)
   },
   methods: {
     getFoodContentData () {
-      let rid = this.$route.params.id
-      this.food = this.getFoodContent(rid)
+      let id = this.$route.query.id
+      let pid = this.$route.query.pid
+      console.log(pid)
+      this.food = this.getFoodContent(id)
+      this.foodList = this.getFoodList(pid)
       let _this = this
       this.$nextTick(function () {
         _this.initScroll()

@@ -24,6 +24,18 @@ const cart = {
         })
         return foodItem
       }
+    },
+    getFoodList: function (state) {
+      return function (pid) {
+        let foodList = []
+        console.log(state.cartGoods)
+        state.cartGoods.forEach(function (item) {
+          if (parseInt(item.id) === parseInt(pid)) {
+            foodList = item.foods
+          }
+        })
+        return foodList
+      }
     }
   },
   actions: { // 触发改变状态的方法   对外开放 object 触发状态方法

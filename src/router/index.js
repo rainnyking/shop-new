@@ -44,7 +44,7 @@ export default new Router({
       ]
     },
     {
-      path: '/food/:id',
+      path: '/food',
       name: 'food',
       component: resolve => require(['@/views/food/food'], resolve)
     }
