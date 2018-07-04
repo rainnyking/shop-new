@@ -16,6 +16,9 @@ const cart = {
               if (oldGoodsData[index].foods[findex].count) {
                 food.count = oldGoodsData[index].foods[findex].count
               }
+              if (oldGoodsData[index].foods[findex].like) {
+                food.like = oldGoodsData[index].foods[findex].like
+              }
             })
           })
           newGoodsData = res.goods
