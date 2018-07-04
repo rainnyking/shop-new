@@ -36,14 +36,6 @@
               <span class="now"><i>￥</i>{{food.price}}</span>
               <span class="old" v-if="food.oldPrice">￥{{food.oldPrice}}</span>
             </div>
-            <div class="cartcontrol-wrapper" v-show="food.count > 0">
-              <buy-ball :food="food">购物小球</buy-ball>
-            </div>
-            <transition name="fade">
-              <div class="buy" v-show="!food.count || food.count === 0" @click="foodBuy">
-                加入购物车
-              </div>
-            </transition>
             <div class="three-sell">
               <div class="item">
                 <span><i class="iconfont icon-gouwu"></i></span>
@@ -72,7 +64,7 @@
             <div class="goods-box">
               <van-row gutter="20">
                 <van-col span="8" v-for="(item,index) in foodList.foods" v-if="index < 6 && item.id !== $route.query.id" :key="index">
-                  <div class="goods-item" @click="goOther(foodList.id, item.id)">
+                  <div class="goods-item" @tap.stop.prevent="goOther(foodList.id, item.id)">
                     <div class="foods-img-box">
                       <img v-lazy="item.icon">
                     </div>
@@ -83,7 +75,7 @@
                         <span class="pice">{{item.price}}</span>
                         <span class="samll unit">/{{item.unit}}</span>
                       </div>
-                      <div class="buy-box" @click.stop.prevent="buyCart(item)">
+                      <div class="buy-box" @tap.stop.prevent="buyCart(item)">
                         <div class="buy"><van-icon name="cart" /></div>
                       </div>
                     </div>
@@ -126,7 +118,7 @@
         </div>
       </div>
     </div>
-    <food-bottom>加入购物车</food-bottom>
+    <food-bottom :food="food">加入购物车</food-bottom>
   </div>
 </template>
 
@@ -177,7 +169,8 @@ export default {
     },
     initScroll () {
       this.foodContentScroll = new BScroll(this.$refs.foodContent, {
-        click: true,
+        // click: true,
+        tap: 'goOther,buyCart',
         probeType: 3
       })
       let _this = this
@@ -210,11 +203,6 @@ export default {
     },
     goback () {
       this.$router.go(-1)
-    },
-    foodBuy () {
-      if (!this.food.count) {
-        this.$set(this.food, 'count', 1)
-      }
     }
   },
   watch: {

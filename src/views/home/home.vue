@@ -42,7 +42,7 @@
               <div class="goods-box">
                 <van-row gutter="20">
                   <van-col span="8" v-for="(food,index) in item.foods" :key="index">
-                    <div class="goods-item" @click="gothink(item.id, food.id)">
+                    <div class="goods-item" @tap.stop.prevent="gothink(item.id, food.id)">
                       <div class="foods-img-box">
                         <img v-lazy="food.icon">
                       </div>
@@ -53,7 +53,7 @@
                           <span class="pice">{{food.price}}</span>
                           <span class="samll unit">/{{food.unit}}</span>
                         </div>
-                        <div class="buy-box" @click.stop.prevent="buyCart(food, $event)">
+                        <div class="buy-box" @tap.stop.prevent="buyCart(food, $event)">
                           <div class="buy"><van-icon name="cart" /></div>
                         </div>
                       </div>
@@ -91,12 +91,12 @@ export default {
       scrollY: ''
     }
   },
-  mounted () {
-    this.getData()
-  },
-  // activated () {
+  // mounted () {
   //   this.getData()
   // },
+  activated () {
+    this.getData()
+  },
   computed: {
     ...mapGetters(['getCartGoods']),
     bannerText () {
@@ -141,6 +141,7 @@ export default {
       this.goodsScroll = new BScroll(this.$refs.homeGoods, {
         click: true,
         // wheelWrapperClass: true,
+        tap: 'gothink,buyCart',
         probeType: 3
       })
       let _this = this
