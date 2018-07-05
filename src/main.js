@@ -6,6 +6,7 @@ import router from './router'
 import store from './store'
 import Vant from 'vant' // 引用 UI
 import 'vant/lib/vant-css/index.css'
+import './styles/font/iconfont.css'
 import axios from 'axios' // axios
 import VueLazyload from 'vue-lazyload' // 图片懒加载
 
