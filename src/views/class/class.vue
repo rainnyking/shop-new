@@ -24,7 +24,7 @@
             <ul>
               <li class="food-item border-1px" v-for="(food, index) in goods.foods" :key="index" @click="gothink(goods.id, food.id)">
                 <div class="icon">
-                  <img v-lazy="food.icon" width="57" height="57">
+                  <img v-lazy="food.icon" :key="food.icon" width="57" height="57">
                 </div>
                 <div class="content">
                   <h2 class="name">{{food.name}}</h2>
