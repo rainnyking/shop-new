@@ -91,12 +91,12 @@ export default {
       scrollY: ''
     }
   },
-  // mounted () {
-  //   this.getData()
-  // },
-  activated () {
+  created () {
     this.getData()
   },
+  // activated () {
+  //   this.getData()
+  // },
   computed: {
     ...mapGetters(['getCartGoods']),
     bannerText () {

@@ -33,7 +33,7 @@
         <transition name="drop" @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter">
           <div class="ball" v-show="ball.show">
             <div class="inner inner-hook">
-              <img :src="food.icon">
+              <img :src="innerImg">
             </div>
           </div>
         </transition>
@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import Bus from '../../common/bus'
 import { mapGetters } from 'vuex'
 export default {
   name: 'food-bottom',
@@ -70,10 +71,17 @@ export default {
           show: false
         }
       ],
-      dropBalls: []
+      dropBalls: [],
+      innerImg: ''
     }
   },
   mounted () {
+    Bus.$on('cartBall', el => {
+      this.$nextTick(() => {
+        this.drop(el.dom)
+        this.innerImg = el.ico
+      })
+    })
   },
   computed: {
     ...mapGetters(['getCartGoods']),
@@ -108,8 +116,18 @@ export default {
     likeCurrt () {
       if (!this.food.like || this.food.like === 0) {
         this.$set(this.food, 'like', 1)
+        this.$toast({
+          duration: 1000,
+          position: 'bottom',
+          message: '已收藏'
+        })
       } else {
         this.food.like = 0
+        this.$toast({
+          duration: 1000,
+          position: 'bottom',
+          message: '已取消收藏'
+        })
       }
     },
     golink (to) {
@@ -135,7 +153,7 @@ export default {
         if (ball.show) {
           // getBoundingClientRect 这个方法返回一个矩形对象，包含四个属性：left、top、right和bottom
           let rect = ball.el.getBoundingClientRect()
-          let x = rect.left - (window.innerWidth * 0.6)
+          let x = rect.left - (window.innerWidth * 0.26)
           let y = -(window.innerHeight - rect.top - 22)
 
           el.style.display = ''
@@ -245,7 +263,7 @@ export default {
   .ball-container {
     .ball {
       position: fixed;
-      left: 60%;
+      left: 26%;
       bottom: 22px;
       z-index: 200;
       .inner {

@@ -75,7 +75,7 @@
                         <span class="pice">{{item.price}}</span>
                         <span class="samll unit">/{{item.unit}}</span>
                       </div>
-                      <div class="buy-box" @tap.stop.prevent="buyCart(item)">
+                      <div class="buy-box" @tap.stop.prevent="buyCart(item, $event)">
                         <div class="buy"><van-icon name="cart" /></div>
                       </div>
                     </div>
@@ -123,6 +123,7 @@
 </template>
 
 <script>
+import Bus from '../common/bus'
 import foodBottom from './children/foodBottom'
 import split from '../split/split'
 import BScroll from 'better-scroll'
@@ -191,14 +192,14 @@ export default {
         }
       })
     },
-    buyCart (food) {
+    buyCart (food, event) {
       console.log(food)
       if (!food.count) {
         this.$set(food, 'count', 1)
       } else {
         food.count++
       }
-      // this.$emit('cartBall', {dom: event.target, ico: food.icon})
+      Bus.$emit('cartBall', {dom: event.target, ico: food.icon})
       // console.log(food.count)
     },
     goback () {
