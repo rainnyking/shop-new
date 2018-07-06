@@ -7,12 +7,19 @@
         @click-right="empty"
       />
     </div>
-    <div class="cart-food">
-      <ul>
+    <div class="cart-null-box" v-show="cartFoodCount === 0">
+      <div class="cart-null">
+        <i class="iconfont icon-hezi401"></i>
+        <div class="text">您还没有添加商品哦~</div>
+        <van-button size="small" class="cart-button" @click="tolink('/home')">去逛逛</van-button>
+      </div>
+    </div>
+    <div class="cart-food" ref="cartFood" v-show="cartFoodCount > 0">
+      <ul style="padding: 10px 0">
         <li class="food-list food-list-hook" v-for="goods in getCartGoods" :key="goods.id">
           <ul>
             <li
-              class="food-item border-1px"
+              class="food-item"
               v-for="(food, index) in goods.foods"
               v-if="food.count > 0"
               :key="index"
@@ -32,7 +39,7 @@
                   <span class="old" v-if="food.oldPrice">￥{{food.oldPrice}}</span>
                 </div>
                 <div class="cartcontrol-wrapper">
-                  <ball-buy :food="food">购物加减</ball-buy>
+                  <ball-buy :food="food" @buyCartBall="buyballDom">购物加减</ball-buy>
                 </div>
               </div>
             </li>
@@ -44,6 +51,7 @@
 </template>
 
 <script>
+import BScroll from 'better-scroll'
 import ballBuy from '../buyBall/buyball'
 import { mapGetters } from 'vuex'
 export default {
@@ -54,24 +62,45 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getCartGoods'])
+    ...mapGetters(['getCartGoods']),
+    cartFoodCount () {
+      let zhi = 0
+      this.getCartGoods.forEach(function (item) {
+        item.foods.forEach(function (food) {
+          if (food.count) {
+            zhi += food.count
+          }
+        })
+      })
+      return zhi
+    }
   },
   mounted () {
-    this.getFoodsItem()
+    this.getCartFood()
   },
   methods: {
-    empty () {
-      console.log('1111111111')
+    buyballDom (msg) {
+      this.$emit('cartBall', msg)
     },
-    getFoodsItem () {
-      // let _this = this
-      // this.getCartGoods.forEach(function (item) {
-      //   item.foods.forEach(function (food) {
-      //     if (food.count > 0) {
-      //       _this.foods.push(food)
-      //     }
-      //   })
-      // })
+    empty () {
+      this.getCartGoods.forEach(function (item) {
+        item.foods.forEach(function (food) {
+          if (food.count) {
+            food.count = 0
+          }
+        })
+      })
+    },
+    getCartFood () {
+      let _this = this
+      this.$nextTick(function () {
+        _this.cartScroll()
+      })
+    },
+    cartScroll () {
+      this.cartFoodScroll = new BScroll(this.$refs.cartFood, {
+        click: true
+      })
     },
     gothink (pid, id) {
       this.$router.push({
@@ -81,7 +110,13 @@ export default {
           id: id
         }
       })
+    },
+    tolink (to) {
+      this.$router.replace(to)
     }
+  },
+  watch: {
+    '$route': 'getCartFood' // 监听路由重新加载滚动的dom，这样购物车的商品才不会不滚动
   },
   components: {
     ballBuy
@@ -93,6 +128,9 @@ export default {
     .van-nav-bar__right {
       .van-nav-bar__text {
         color: #fff;
+        &:active {
+          background-color: #37bd8a;
+        }
       }
     }
   }
@@ -106,16 +144,46 @@ export default {
       color: #fff;
     }
   }
+  .cart-null-box {
+    position: absolute;
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    .cart-null {
+      margin: 20px 0;
+      text-align: center;
+      i {
+        font-size: 60px;
+        color: #ddd;
+      }
+      .text {
+        color: #ddd;
+        font-size: 12px;
+        padding: 0 0 15px;
+      }
+      .cart-button {
+        color: #fff;
+        background-color: #3cc591;
+        border: 1px solid #3cc591;
+      }
+    }
+  }
   .cart-food {
+    position: absolute;
+    top: 46px;
+    width: 100%;
+    bottom: 50px;
     flex: 1;
+    overflow: hidden;
+    background-color: #f8f8f8;
     .food-item {
       display: flex;
-      margin: 18px 10px;
-      padding-bottom: 18px;
-      @include border-1px(rgba(7, 17, 27, .1));
+      padding: 18px 10px;
+      background-color: #fff;
+      margin-bottom: 10px;
+      @include border-1px(rgba(7, 17, 27, 0));
       &:last-child {
         @include border-none();
-        margin-bottom: 0;
       }
       .icon {
         flex: 0 0 57px;
@@ -160,7 +228,7 @@ export default {
         }
         .cartcontrol-wrapper {
           position: absolute;
-          right: 0;
+          right: 10px;
           bottom: 14px;
         }
       }
